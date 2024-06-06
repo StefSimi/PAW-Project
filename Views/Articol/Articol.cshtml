@@ -1,0 +1,46 @@
+﻿@model ArticolModel
+
+@{
+    ArticolModel articol = Model;
+    ViewData["Title"] = articol.Titlu;
+    string userRole = User?.Claims?.FirstOrDefault(claim => claim.Type == "Role")?.Value ?? "";
+    string userId = User?.Claims?.FirstOrDefault(claim => claim.Type == "Id")?.Value ?? "0";
+    
+
+}
+@if (userRole.ToLower() == "moderator" || userRole.ToLower() == "admin"||int.Parse(userId)==articol.AutorId){
+
+    <form asp-controller="Articol" asp-action="Restrict" method="post">
+        <input type="hidden" name="articolId" value="@articol.Id" />
+        <button type="submit">Restrict</button>
+    </form>
+}
+
+@if (userRole.ToLower() == "moderator" || userRole.ToLower() == "admin")
+{
+
+    <form asp-controller="Articol" asp-action="Rollback" method="post">
+        <input type="hidden" name="articolId" value="@articol.Id" />
+        <button type="submit">Rollback</button>
+    </form>
+}
+
+
+@{if(articol.Restrictionat)
+        if (userRole.ToLower() == "moderator" || userRole.ToLower() == "admin"||int.Parse(userId)==articol.AutorId){
+            <p style="color:red">Restrictionat</p>
+            <h1>Titlu: @articol.Titlu</h1>
+            <p>@articol.Continut</p>
+        }
+        else
+        {
+            <p>Acces restrictionat</p>
+        }
+    else
+    {
+        <h1>Titlu: @articol.Titlu</h1>
+        <p>@Html.Raw(articol.Continut)</p>
+    }
+}
+
+<a asp-action="Index">Reintoarcere la pagina principala</a>

@@ -1,0 +1,37 @@
+﻿@model List<ArticolModel>
+
+@{
+    List<ArticolModel> articole = Model;
+    ViewData["Title"] = "PawKi";
+    string userRole = User?.Claims?.FirstOrDefault(claim => claim.Type == "Role")?.Value ?? "";
+    string userId = User?.Claims?.FirstOrDefault(claim => claim.Type == "Id")?.Value ?? "0";
+}
+
+
+
+<a class="btn btn-primary" asp-action="AdaugaArticol">Adauga Articol</a>
+
+
+@{
+    foreach (ArticolModel articol in articole)
+    {
+        if (!articol.Restrictionat || userRole.ToLower() == "moderator" || userRole.ToLower() == "admin" || int.Parse(userId) == articol.AutorId){
+            <div class="card my-3">
+                <div class="card-body">
+                    <h2><a asp-controller="Articol" asp-action="Articol" asp-route-articolId="@articol.Id">@articol.Titlu</a></h2>
+
+                    @if (userRole.ToLower() == "moderator" || userRole.ToLower() == "admin")
+                    {
+                        <a class="btn btn-primary" asp-controller="Articol" asp-action="ModificaArticol" asp-route-articolId="@articol.Id">Modifica Articol</a>
+                    }
+                </div>
+            </div>
+            <br />
+        }
+        
+    }
+}
+@* daca nu mentionam controller-ul, este implicit controllerul cu acelasi nume precum folder-ul parinte al fisierului *@
+<h2>
+    
+</h2>

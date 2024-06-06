@@ -1,0 +1,29 @@
+﻿@model IEnumerable<dynamic>
+
+@{
+    ViewData["Title"] = "Home Page";
+    string userRole = User?.Claims?.FirstOrDefault(claim => claim.Type == "Role")?.Value ?? "";
+    string userId = User?.Claims?.FirstOrDefault(claim => claim.Type == "Id")?.Value ?? "0";
+}
+
+<h2>Latest Articles by Category</h2>
+<br/>
+
+@foreach (var articol in Model)
+{
+    if (!articol.Restrictionat || userRole.ToLower() == "moderator" || userRole.ToLower() == "admin" || int.Parse(userId) == articol.AutorId)
+    {
+        <h2>@articol.CategoryName</h2>
+        <div class="card my-3">
+            <div class="card-body">
+                <h2><a asp-controller="Articol" asp-action="Articol" asp-route-articolId="@articol.Id">@articol.ArticleTitle</a></h2>
+
+                @if (userRole.ToLower() == "moderator" || userRole.ToLower() == "admin")
+                {
+                    <a class="btn btn-primary" asp-controller="Articol" asp-action="ModificaArticol" asp-route-articolId="@articol.Id">Modifica Articol</a>
+                }
+            </div>
+        </div>
+        <br />
+    }
+}

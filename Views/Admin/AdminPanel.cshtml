@@ -1,0 +1,38 @@
+﻿@model IEnumerable<Laborator09.Models.UserModel>
+@using Laborator09.Logic
+
+@{
+    ViewData["Title"] = "Admin Panel";
+}
+
+<h2>Admin Panel</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Username</th>
+            <th>Role</th>
+            <th>Change Role</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.Username</td>
+                <td>@user.Role</td>
+                <td>
+                    <form asp-action="ChangeUserRole" method="post">
+                        <input type="hidden" name="userId" value="@user.Id" />
+                        <select name="newRole" class="form-control">
+                            <option value="LoggedUser">LoggedUser</option>
+                            <option value="Moderator">Moderator</option>
+                            <option value="Admin">Admin</option>
+                        </select>
+                        <button type="submit" class="btn btn-primary">Change Role</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

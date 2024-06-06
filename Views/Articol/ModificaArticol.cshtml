@@ -1,0 +1,68 @@
+﻿@model ArticolModel
+@{
+    ViewData["Title"] = "Modifica Articol Lab07 MVC";
+    List<SelectListItem> categorii = ViewBag.Categorii;
+}
+
+<div class="container">
+    <form method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group">
+            <label asp-for="@Model.Titlu" class="control-label">Title</label>
+            <input asp-for="@Model.Titlu" class="form-control" />
+            <span asp-validation-for="@Model.Titlu" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.Continut" class="control-label">Content</label>
+            <textarea asp-for="@Model.Continut" class="form-control"></textarea>
+            <span asp-validation-for="@Model.Continut" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.DataAdaugare" class="control-label">Date</label>
+            <input asp-for="@Model.DataAdaugare" class="form-control" />
+            <span asp-validation-for="@Model.DataAdaugare" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.CategorieId" class="control-label">Category Id</label>
+            <select asp-for="@Model.CategorieId" asp-items="@categorii" class="form-control"></select>
+            <span asp-validation-for="@Model.CategorieId" class="text-danger"></span>
+        </div>
+        <br />
+        <input type="hidden" asp-for="@Model.Id" />
+        <input type="submit" value="Adauga" />
+        <br />
+    </form>
+</div>
+@section Scripts {
+    <script src="https://cdn.tiny.cloud/1/2vos5fbmd1librnhqk4n0e15uum4vz0tq64yhwrgv0rugeod/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+    <script>
+        tinymce.init({
+            selector: 'textarea',
+            plugins: 'link image code',
+            toolbar: 'undo redo | formatselect | bold italic | alignleft aligncenter alignright | link image | code',
+            images_upload_url: '/Article/UploadImage',
+            automatic_uploads: true,
+            file_picker_types: 'image',
+            file_picker_callback: function (cb, value, meta) {
+                var input = document.createElement('input');
+                input.setAttribute('type', 'file');
+                input.setAttribute('accept', 'image/*');
+                input.onchange = function () {
+                    var file = this.files[0];
+                    var reader = new FileReader();
+                    reader.onload = function () {
+                        var id = 'blobid' + (new Date()).getTime();
+                        var blobCache = tinymce.activeEditor.editorUpload.blobCache;
+                        var base64 = reader.result.split(',')[1];
+                        var blobInfo = blobCache.create(id, file, base64);
+                        blobCache.add(blobInfo);
+                        cb(blobInfo.blobUri(), { title: file.name });
+                    };
+                    reader.readAsDataURL(file);
+                };
+                input.click();
+            },
+            apiKey: 'your-api-key'
+        });
+    </script>
+}
